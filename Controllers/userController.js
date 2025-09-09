@@ -12,7 +12,7 @@ const getProfile = async (req, res, next) => {
 const editProfile = async (req, res) => {
     try {
         const {name, username, email, password} = req.body
-        const userId = req.userInfo.id
+        const userId = req.userInfo
         if(name || username || email || password){
             const updateUser = await UserModel.findByIdAndUpdate(userId, {name, username, password, email})
             console.log(updateUser)
