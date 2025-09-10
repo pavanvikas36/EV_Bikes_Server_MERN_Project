@@ -3,6 +3,7 @@ const app = express()
 require("dotenv").config()
 const authRoutes = require("./Routes/authRoutes.js")
 const profileRouter = require("./Routes/userRouter.js")
+const dealerRouter = require("./Routes/dealerRoutes.js")
 const {errorHandler} = require("./Middlewares/errorMiddleware.js")
 const connectDB = require("./Config/database.js")
 // const cors = require("cors")
@@ -20,6 +21,7 @@ app.use(express.urlencoded(true))
 
 app.use("/auth", authRoutes)
 app.use("/user", profileRouter)
+app.use("/dealers", dealerRouter)
 
 app.use(errorHandler)
 

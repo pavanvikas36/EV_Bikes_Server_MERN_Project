@@ -20,3 +20,16 @@ exports.checkAuth = async (req, res, next) => {
         next({statusCode:403, message: error.message})
     }
 }
+
+
+exports.checkRole = (...roles) => {
+    return async (req, res, next) => {
+        const checkuser = req.userInfo
+        const data = await UserModel.findById(checkuser.id).select("role")
+        if(roles.includes(data.role)){
+            next()
+        }else{
+            next({statusCode: 403, message: "Only Dealer Can Access"})
+        }
+    }
+}

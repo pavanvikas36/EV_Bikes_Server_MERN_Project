@@ -10,7 +10,8 @@ const authSchema = new mongoose.Schema({
         require:true,
         enum:["buyer", "dealer"],
         default: "buyer"
-    }
+    },
+    profilepic: {type:String}
 }, {timestamps:true})
 
 const UserModel = mongoose.model("users", authSchema)
