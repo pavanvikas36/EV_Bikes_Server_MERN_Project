@@ -13,12 +13,8 @@ const signupController = async (req, res, next) => {
       password: hashPassword,
       role: "dealer",
     });
-    // const result = await user.save()
-    // res.json(result)
     res.json(user);
   } catch (error) {
-    // console.log(error)
-    // res.status(400).send("Somthing Went Wrong")
     const err = { statusCode: 400, message: error.message };
     next(err);
   }
@@ -28,8 +24,6 @@ const loginController = async(req, res, next) => {
   try {
     const {email, password} = req.body
     const findUser = await UserModel.findOne({email: email})
-    // console.log(findUser)
-    // res.json(findUser)
     const decryptPassword = await bcryptjs.compare(password, findUser.password)
     const user = await UserModel.findById(findUser._id).select(["-password", "-createdAt", "-updatedAt", "-__v"])
     if(decryptPassword){
@@ -42,7 +36,6 @@ const loginController = async(req, res, next) => {
     const err = { statusCode: 400, message: error.message };
     next(err);
   }
-  // res.send("Login API")
 };
 
 module.exports = { signupController, loginController };

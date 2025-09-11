@@ -29,7 +29,7 @@ exports.checkRole = (...roles) => {
         if(roles.includes(data.role)){
             next()
         }else{
-            next({statusCode: 403, message: "Only Dealer Can Access"})
+            next({statusCode: 403, message: `Only ${roles.join(",")} Can Access`})
         }
     }
 }

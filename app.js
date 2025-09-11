@@ -4,17 +4,18 @@ require("dotenv").config()
 const authRoutes = require("./Routes/authRoutes.js")
 const profileRouter = require("./Routes/userRouter.js")
 const dealerRouter = require("./Routes/dealerRoutes.js")
+const buyerRouter = require("./Routes/buyerRoutes.js")
 const {errorHandler} = require("./Middlewares/errorMiddleware.js")
 const connectDB = require("./Config/database.js")
-// const cors = require("cors")
+const cors = require("cors")
 
 connectDB()
 
-// app.use(cors({
-//     origin: "http://localhost:5173",
-//     method: ["GET", "POST", "PUT", "DELETE"],
-//     credentials: true
-// }))
+app.use(cors({
+    origin: "http://localhost:5173",
+    method: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true
+}))
 
 app.use(express.json())
 app.use(express.urlencoded(true))
@@ -22,6 +23,7 @@ app.use(express.urlencoded(true))
 app.use("/auth", authRoutes)
 app.use("/user", profileRouter)
 app.use("/dealers", dealerRouter)
+app.use("/buyer", buyerRouter)
 
 app.use(errorHandler)
 
