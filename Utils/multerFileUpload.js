@@ -6,11 +6,20 @@ const storage = multer.diskStorage({
     cb(null, path.join(__dirname, "..", "Uploads"))
   },
   filename: function (req, file, cb) {
-    // const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-    cb(null, Date.now() + file.originalname)
+    cb(null, Date.now() + "-" + file.originalname)
   }
 })
 
-const upload = multer({ storage: storage })
+const upload = multer({
+  storage: storage,
+  limits: {fileSize: 5 * 1024 * 1024},
+  fileFilter: (req, file, cb) => {
+    if(file.mimetype.startsWith("images/")){
+      cb(null, true)
+    }else{
+      cb(new Error("Only image files are allowed!"), false)
+    }
+  }
+})
 
 module.exports = {upload}
