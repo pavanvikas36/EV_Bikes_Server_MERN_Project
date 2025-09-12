@@ -1,37 +1,209 @@
-const bcryptjs = require("bcryptjs");
-const { UserModel } = require("../Models/authModel.js");
-const {generateToken} = require("../Utils/tokens.js")
+// Main Code
+// const bcryptjs = require("bcryptjs");
+// const { UserModel } = require("../Models/authModel.js");
+// const {generateToken} = require("../Utils/tokens.js")
 
+// const signupController = async (req, res, next) => {
+//   try {
+//     const { name, username, email, password, role } = req.body;
+//     const hashPassword = await bcryptjs.hashSync(password, 12);
+//     const user = await UserModel.create({
+//       name: name,
+//       username: username,
+//       email: email,
+//       password: hashPassword,
+//       role: "dealer",
+//     });
+//     res.json(user);
+//   } catch (error) {
+//     const err = { statusCode: 400, message: error.message };
+//     next(err);
+//   }
+// };
+
+// const loginController = async(req, res, next) => {
+//   try {
+//     const {email, password} = req.body
+//     const findUser = await UserModel.findOne({email: email})
+//     const decryptPassword = await bcryptjs.compare(password, findUser.password)
+//     const user = await UserModel.findById(findUser._id).select(["-password", "-createdAt", "-updatedAt", "-__v"])
+//     if(decryptPassword){
+//       const token = await generateToken(findUser)
+//       return res.status(200).json({message: "Login Sucessfully", user, token})
+//     }else{
+//       return res.status(400).json({message: "Invalid Email And Password"})
+//     }
+//   } catch (error) {
+//     const err = { statusCode: 400, message: error.message };
+//     next(err);
+//   }
+// };
+
+// module.exports = { signupController, loginController };
+
+
+// ChatGPT Code
+// const bcryptjs = require("bcryptjs");
+// const { BuyerModel } = require("../Models/buyerModel.js");
+// const { DealerModel } = require("../Models/dealerModel.js");
+// const { generateToken } = require("../Utils/tokens.js");
+
+// const signupController = async (req, res, next) => {
+//   try {
+//     const { name, username, email, password, role } = req.body;
+//     const hashPassword = await bcryptjs.hash(password, 12);
+
+//     let user;
+//     if (role === "buyer") {
+//       user = await BuyerModel.create({
+//         name,
+//         username,
+//         email,
+//         password: hashPassword,
+//         role: "buyer",
+//       });
+//     } else if (role === "dealer") {
+//       user = await DealerModel.create({
+//         name,
+//         username,
+//         email,
+//         password: hashPassword,
+//         role: "dealer",
+//       });
+//     } else {
+//       return res.status(400).json({ message: "Invalid role specified" });
+//     }
+
+//     res.status(201).json(user);
+//   } catch (error) {
+//     const err = { statusCode: 400, message: error.message };
+//     next(err);
+//   }
+// };
+
+// const loginController = async (req, res, next) => {
+//   try {
+//     const { email, password, role } = req.body;
+
+//     let findUser;
+//     if (role === "buyer") {
+//       findUser = await BuyerModel.findOne({ email });
+//     } else if (role === "dealer") {
+//       findUser = await DealerModel.findOne({ email });
+//     } else {
+//       return res.status(400).json({ message: "Invalid role specified" });
+//     }
+
+//     if (!findUser) {
+//       return res.status(400).json({ message: "User not found" });
+//     }
+
+//     const isMatch = await bcryptjs.compare(password, findUser.password);
+//     if (!isMatch) {
+//       return res.status(400).json({ message: "Invalid email or password" });
+//     }
+
+//     const user = await (role === "buyer"
+//       ? BuyerModel.findById(findUser._id).select(["-password", "-createdAt", "-updatedAt", "-__v"])
+//       : DealerModel.findById(findUser._id).select(["-password", "-createdAt", "-updatedAt", "-__v"]));
+
+//     const token = await generateToken(findUser);
+
+//     return res.status(200).json({ message: "Login successfully", user, token });
+//   } catch (error) {
+//     const err = { statusCode: 400, message: error.message };
+//     next(err);
+//   }
+// };
+
+// module.exports = { signupController, loginController };
+
+
+//New ChatGPT Code
+const bcryptjs = require("bcryptjs");
+const { BuyerModel } = require("../Models/buyerModel.js");
+const { DealerModel } = require("../Models/dealerModel.js");
+const { generateToken } = require("../Utils/tokens.js");
+
+// ✅ SIGNUP CONTROLLER
 const signupController = async (req, res, next) => {
   try {
     const { name, username, email, password, role } = req.body;
-    const hashPassword = await bcryptjs.hashSync(password, 12);
-    const user = await UserModel.create({
-      name: name,
-      username: username,
-      email: email,
-      password: hashPassword,
-      role: "dealer",
+
+    // 🔹 Check if username or email already exists in either collection
+    const existingBuyer = await BuyerModel.findOne({ 
+      $or: [{ email }, { username }] 
     });
-    res.json(user);
+    const existingDealer = await DealerModel.findOne({ 
+      $or: [{ email }, { username }] 
+    });
+
+    if (existingBuyer || existingDealer) {
+      return res.status(400).json({
+        message: "Username or Email already exists. Please choose another."
+      });
+    }
+
+    const hashPassword = await bcryptjs.hash(password, 12);
+
+    let user;
+    if (role === "buyer") {
+      user = await BuyerModel.create({
+        name,
+        username,
+        email,
+        password: hashPassword,
+        role: "buyer",
+      });
+    } else if (role === "dealer") {
+      user = await DealerModel.create({
+        name,
+        username,
+        email,
+        password: hashPassword,
+        role: "dealer",
+      });
+    } else {
+      return res.status(400).json({ message: "Invalid role specified" });
+    }
+
+    res.status(201).json(user);
   } catch (error) {
     const err = { statusCode: 400, message: error.message };
     next(err);
   }
 };
 
-const loginController = async(req, res, next) => {
+// ✅ LOGIN CONTROLLER
+const loginController = async (req, res, next) => {
   try {
-    const {email, password} = req.body
-    const findUser = await UserModel.findOne({email: email})
-    const decryptPassword = await bcryptjs.compare(password, findUser.password)
-    const user = await UserModel.findById(findUser._id).select(["-password", "-createdAt", "-updatedAt", "-__v"])
-    if(decryptPassword){
-      const token = await generateToken(findUser)
-      return res.status(200).json({message: "Login Sucessfully", user, token})
-    }else{
-      return res.status(400).json({message: "Invalid Email And Password"})
+    const { email, password, role } = req.body;
+
+    let findUser;
+    if (role === "buyer") {
+      findUser = await BuyerModel.findOne({ email });
+    } else if (role === "dealer") {
+      findUser = await DealerModel.findOne({ email });
+    } else {
+      return res.status(400).json({ message: "Invalid role specified" });
     }
+
+    if (!findUser) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    const isMatch = await bcryptjs.compare(password, findUser.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid email or password" });
+    }
+
+    const user = await (role === "buyer"
+      ? BuyerModel.findById(findUser._id).select(["-password", "-createdAt", "-updatedAt", "-__v"])
+      : DealerModel.findById(findUser._id).select(["-password", "-createdAt", "-updatedAt", "-__v"]));
+
+    const token = await generateToken(findUser);
+
+    return res.status(200).json({ message: "Login successfully", user, token });
   } catch (error) {
     const err = { statusCode: 400, message: error.message };
     next(err);
@@ -39,6 +211,10 @@ const loginController = async(req, res, next) => {
 };
 
 module.exports = { signupController, loginController };
+
+
+
+
 
 // New Code (Re writen the main code)
 // const bcryptjs = require("bcryptjs");

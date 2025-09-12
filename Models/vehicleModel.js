@@ -7,6 +7,7 @@ const vehicleSchema = new mongoose.Schema({
     model:{type:String, require:true},
     price:{type:Number, require:true},
     fuelType:{type:String, enum:["Petrol", "Diesel", "Electric", "Hybrid"], require:true},
+    transmission: { type: String, required: true },
     description:{type:String, require:true},
     images:[{type:String}],
     createdAt:{type:Date, default:Date.now}

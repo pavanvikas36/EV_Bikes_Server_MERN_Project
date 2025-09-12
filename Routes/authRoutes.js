@@ -1,14 +1,37 @@
-// Main Code
+// "Main Code" //
 const express = require("express")
 const Router = express.Router()
 const {signupController, loginController} = require("../Controllers/authController.js")
 const {signupValidater, loginValidater, validaterMiddleware} = require("../Validators/authValidator.js")
 
 Router.post("/signup", signupValidater, validaterMiddleware, signupController)
-
 Router.post("/login", loginValidater, validaterMiddleware, loginController)
 
 module.exports = Router
+
+
+// "ChatGPT Code" //
+// const express = require("express");
+// const Router = express.Router();
+// const { signupController, loginController } = require("../Controllers/authController.js");
+// const { signupValidater, loginValidater, validaterMiddleware } = require("../Validators/authValidator.js");
+
+// Router.post("/signup", signupValidater, validaterMiddleware, signupController);
+// Router.post("/login", loginValidater, validaterMiddleware, loginController);
+
+// module.exports = Router;
+
+
+// "New ChatGPT Code" //
+// const express = require("express");
+// const Router = express.Router();
+// const { signupController, loginController } = require("../Controllers/authController.js");
+// const { signupValidater, loginValidater, validaterMiddleware } = require("../Validators/authValidator.js");
+
+// Router.post("/signup", signupValidater, validaterMiddleware, signupController);
+// Router.post("/login", loginValidater, validaterMiddleware, loginController);
+
+// module.exports = Router;
 
 
 
