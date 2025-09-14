@@ -2,9 +2,7 @@ const VehicleModel = require("../Models/vehicleModel.js")
 const {cloudinaryImageUpload} = require("../Config/cloudinaryVehicleImages.js")
 const fs = require("fs")
 
-// Orginal Code
 exports.addVehicles = async (req, res) => {
-    console.log("REQ BODY:", req.body);
     try {
         const {brand, model, price, fuelType, transmission, description} = req.body
 
@@ -15,13 +13,14 @@ exports.addVehicles = async (req, res) => {
         let uploadImages = []
         if(req.files && req.files.length > 0){
             for(let file of req.files) {
-                const result = await cloudinaryImageUpload.uploader.upload(file.path, {folder: "vehicles"})
-                uploadImages.push({url: result.secure_url, public_id: result.public_id})
+                const result = await cloudinaryImageUpload(file.path, {folder: "vehicles"})
+                uploadImages.push({url: result.url, public_id: result.public_id})
 
                 // Delete local file after upload to Cloudinary
-                fs.unlinkSync(file.path)
+                fs.unlinkSync(req.file.path);
             }
         }
+        console.log(uploadImages)
         const vehicle = new VehicleModel({
             dealerId: req.userInfo.id,
             brand,
@@ -72,11 +71,6 @@ exports.updateVehicle = async (req, res) => {
     try {
         const {vehicleId} = req.params
         const updates = req.body
-
-        // prevent accidental overwrite of images
-        // if(updates.images){
-        //     delete updates.images
-        // }
 
         const vehicle = await VehicleModel.findByIdAndUpdate({_id: vehicleId, dealerId: req.userInfo.id}, updates, {new: true})
 

@@ -45,7 +45,6 @@ const loginValidater = [
 const tokenValidater = [
     header("Authorization").isString().withMessage("Required Token")
 ]
-console.log("TOKEN VALIDATOR BODY:", tokenValidater);
 
 const editProfileValidater = [
     body("name").optional().isLength({ min: 3, max: 50 }).trim().isString().withMessage("Required Name"),
@@ -64,9 +63,10 @@ const validaterMiddleware = (req, res, next) => {
         const results = validationResult(req)
         if(!results.isEmpty()){
             const err = {statusCode:400, message: "Validation error", errors: results.errors}
+            // console.log("validator error",results.errors )
             next(err)
         }
-        console.log("VALIDATOR BODY:", req.body); // 👀
+        // console.log("VALIDATOR BODY:", req.body); // 👀
         next()
     }
 

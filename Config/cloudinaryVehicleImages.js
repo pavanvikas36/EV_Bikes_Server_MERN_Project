@@ -3,7 +3,7 @@ require("dotenv").config()
 
 cloudinary.config({
     cloud_name: process.env.cloudinary_cloud_name,
-    api_key: process.env.cloudinary_api_keyy,
+    api_key: process.env.cloudinary_api_key,
     api_secret: process.env.cloudinary_api_secret,
 })
 
@@ -16,7 +16,7 @@ async function cloudinaryImageUpload(file){
         .catch((error) => {
             console.log(error);
         });
-    return uploadResult.url
+    return uploadResult
 }
 
 module.exports = {cloudinaryImageUpload}
