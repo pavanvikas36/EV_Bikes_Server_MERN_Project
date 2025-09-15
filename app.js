@@ -8,7 +8,7 @@ const buyerRouter = require("./Routes/buyerRoutes.js")
 const {errorHandler} = require("./Middlewares/errorMiddleware.js")
 const connectDB = require("./Config/database.js")
 const cors = require("cors")
-
+const fs = require("fs")
 connectDB()
 
 app.use(cors({
@@ -16,6 +16,11 @@ app.use(cors({
     method: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
 }))
+
+const checkFolder = fs.existsSync("Uploads")
+if(checkFolder == false){
+    fs.mkdirSync("Uploads")
+}
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
