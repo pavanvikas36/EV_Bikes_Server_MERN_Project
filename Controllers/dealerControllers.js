@@ -17,7 +17,7 @@ exports.addVehicles = async (req, res) => {
                 uploadImages.push({url: result.url, public_id: result.public_id})
 
                 // Delete local file after upload to Cloudinary
-                fs.unlinkSync(req.file.path);
+                fs.unlinkSync(file.path);
             }
         }
         console.log(uploadImages)
