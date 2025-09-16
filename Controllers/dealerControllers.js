@@ -87,7 +87,7 @@ exports.updateVehicle = async (req, res) => {
 
 exports.deleteVehicle = async (req, res) => {
     try {
-        const {vehicleId} = req.params
+        const vehicleId = req.params
 
         const vechile = await VehicleModel.findOne({_id: vehicleId, dealerId: req.userInfo.id})
         if(!vechile) return res.status(404).json({message: "Vehicle not found or not authorized"})
