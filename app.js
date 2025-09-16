@@ -12,7 +12,7 @@ const fs = require("fs")
 connectDB()
 
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: ["https://ev-bikes-frontend-mern-project.vercel.app", "http://localhost:5173"],
     method: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
 }))
