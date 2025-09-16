@@ -103,8 +103,7 @@ exports.updateVehicle = async (req, res) => {
 //     }
 // }
 
-const { VehicleModel } = require("../Models/vehicleModel"); 
-const cloudinary = require("cloudinary").v2; // make sure cloudinary is configured properly
+// make sure cloudinary is configured properly
 
 exports.deleteVehicle = async (req, res) => {
   try {
