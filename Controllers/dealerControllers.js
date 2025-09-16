@@ -107,7 +107,7 @@ exports.updateVehicle = async (req, res) => {
 
 exports.deleteVehicle = async (req, res) => {
   try {
-    const {vehicleId} = req.params.id; // ✅ get actual id
+    const {vehicleId} = req.params; // ✅ get actual id
 
     const vehicle = await VehicleModel.findOne({
       _id: vehicleId,
