@@ -37,22 +37,21 @@ exports.viewAllVehicles = async (req, res, next) => {
 
 
 
-// Corrected viewVehiclesById function
 exports.viewVehiclesById = async (req, res, next) => {
     try {
-        const { id } = req.params;
-        
+        const { vehicleId } = req.params;  // ✅ match route param
+
         // Check if ID is provided
-        if (!id) {
+        if (!vehicleId) {
             return res.status(400).json({ message: "Vehicle ID is required" });
         }
-        
+
         // Check if ID is a valid MongoDB ObjectId
-        if (!mongoose.Types.ObjectId.isValid(id)) {
+        if (!mongoose.Types.ObjectId.isValid(vehicleId)) {
             return res.status(400).json({ message: "Invalid vehicle ID format" });
         }
 
-        const vehicle = await VehicleModel.findById(id);
+        const vehicle = await VehicleModel.findById(vehicleId);
 
         if (!vehicle) {
             return res.status(404).json({ message: "Vehicle Not Found" });
@@ -70,3 +69,39 @@ exports.viewVehiclesById = async (req, res, next) => {
         });
     }
 };
+
+
+
+// Corrected viewVehiclesById function
+// exports.viewVehiclesById = async (req, res, next) => {
+//     try {
+//         const { id } = req.params;
+        
+//         // Check if ID is provided
+//         if (!id) {
+//             return res.status(400).json({ message: "Vehicle ID is required" });
+//         }
+        
+//         // Check if ID is a valid MongoDB ObjectId
+//         if (!mongoose.Types.ObjectId.isValid(id)) {
+//             return res.status(400).json({ message: "Invalid vehicle ID format" });
+//         }
+
+//         const vehicle = await VehicleModel.findById(id);
+
+//         if (!vehicle) {
+//             return res.status(404).json({ message: "Vehicle Not Found" });
+//         }
+
+//         return res.json({
+//             message: "Vehicle Details Retrieved Successfully",
+//             data: vehicle
+//         });
+//     } catch (error) {
+//         console.error("Vehicle Details Server Error:", error);
+//         return res.status(500).json({
+//             message: "Server Error While Fetching Vehicle Details",
+//             error: error.message
+//         });
+//     }
+// };
