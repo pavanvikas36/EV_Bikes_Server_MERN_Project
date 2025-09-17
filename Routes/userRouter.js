@@ -7,6 +7,6 @@ const {upload} = require("../Utils/multerFileUpload.js")
 
 Router.get("/profile", tokenValidater, validaterMiddleware, checkAuth, getProfile)
 
-Router.put("/editProfile", tokenValidater, editProfileValidater, validaterMiddleware, checkAuth, upload.single("profilepic"), editProfile)
+Router.put("/editProfile", upload.single("profilepic"), tokenValidater, editProfileValidater, validaterMiddleware, checkAuth, editProfile)
 
 module.exports = Router
