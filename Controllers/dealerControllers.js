@@ -23,6 +23,8 @@ exports.addVehicles = async (req, res) => {
         console.log(uploadImages)
         const vehicle = new VehicleModel({
             dealerId: req.userInfo.id,
+            dealername: req.userInfo.name,
+            dealerEmail: req.userInfo.email,
             brand,
             model,
             price,
