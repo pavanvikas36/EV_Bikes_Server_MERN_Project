@@ -21,10 +21,9 @@ exports.addVehicles = async (req, res) => {
             }
         }
         console.log(uploadImages)
+        console.log(req.userInfo)
         const vehicle = new VehicleModel({
             dealerId: req.userInfo.id,
-            dealername: req.userInfo.name,
-            dealerEmail: req.userInfo.email,
             brand,
             model,
             price,
@@ -33,6 +32,7 @@ exports.addVehicles = async (req, res) => {
             description,
             images: uploadImages
         })
+        console.log(vehicle)
         const savedVehicle = await vehicle.save()
         return res.status(201).json({message: "Vehicle Added Successfully", data: savedVehicle})
 
