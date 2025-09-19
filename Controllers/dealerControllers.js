@@ -24,6 +24,8 @@ exports.addVehicles = async (req, res) => {
         console.log(req.userInfo)
         const vehicle = new VehicleModel({
             dealerId: req.userInfo.id,
+            dealerName: req.userInfo.name,
+            dealerEmail: req.userInfo.email,
             brand,
             model,
             price,
@@ -85,27 +87,6 @@ exports.updateVehicle = async (req, res) => {
     }
 }
 
-
-
-// exports.deleteVehicle = async (req, res) => {
-//     try {
-//         const vehicleId = req.params
-
-//         const vechile = await VehicleModel.findOne({_id: vehicleId, dealerId: req.userInfo.id})
-//         if(!vechile) return res.status(404).json({message: "Vehicle not found or not authorized"})
-        
-//         // Delete images from Cloudinary
-//         for (let img of vechile.images) {
-//             await cloudinaryImageUpload.uploader.destroy(img.public_id)
-//         }
-//         await vechile.deleteOne()
-//         return res.json({ message: "Vehicle Deleted Successfully" });
-//     } catch (error) {
-//         return res.status(500).json({ message: "Server Error", error: error.message });
-//     }
-// }
-
-// make sure cloudinary is configured properly
 
 exports.deleteVehicle = async (req, res) => {
   try {
