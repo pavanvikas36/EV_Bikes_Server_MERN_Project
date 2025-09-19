@@ -7,8 +7,8 @@ const { checkAuth, checkRole } = require("../Middlewares/authMiddleware.js")
 
 Router.get("/viewAllVehicles", tokenValidater, validaterMiddleware, checkAuth, checkRole("buyer"), viewAllVehicles)
 Router.get("/viewVehicles/:vehicleId", tokenValidater, validaterMiddleware, checkAuth, checkRole("buyer"), viewVehiclesById)
-Router.post("/viewVehicles/addToWishlist/:vehicleId", tokenValidater, validaterMiddleware, checkAuth, checkRole("buyer"), addToWishlistById)
-Router.delete("/viewVehicles/deleteWishlist/:vehicleId", tokenValidater, validaterMiddleware, checkAuth, checkRole("buyer"), removeFromWishlistById)
+Router.post("/addToWishlist/:vehicleId", tokenValidater, validaterMiddleware, checkAuth, checkRole("buyer"), addToWishlistById)
+// Router.delete("deleteWishlist/:vehicleId", tokenValidater, validaterMiddleware, checkAuth, checkRole("buyer"), removeFromWishlistById)
 
 
 module.exports = Router
