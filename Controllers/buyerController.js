@@ -1,4 +1,5 @@
 const VehicleModel = require("../Models/vehicleModel.js")
+const { BuyerModel } = require("../Models/buyerModel.js")
 const mongoose = require("mongoose"); 
 
 exports.viewAllVehicles = async (req, res, next) => {
@@ -11,31 +12,7 @@ exports.viewAllVehicles = async (req, res, next) => {
             error: error.message
         })
     }
-    // res.send("All Vehicles")
 }
-
-// exports.viewVehiclesById = async (req, res, next) => {
-//     try {
-//         const { id } = req.params;
-//         const vehicle = await VehicleModel.findById(id);
-
-//         if (!vehicle) {
-//             return res.status(404).json({ message: "Vehicle Not Found" });
-//         }
-
-//         return res.json({
-//             message: "Vehicle Details",
-//             data: vehicle
-//         });
-//     } catch (error) {
-//         return res.status(500).json({
-//             message: "Vehicle Details Server Error",
-//             error: error.message
-//         });
-//     }
-// };
-
-
 
 exports.viewVehiclesById = async (req, res, next) => {
     try {
@@ -70,38 +47,101 @@ exports.viewVehiclesById = async (req, res, next) => {
     }
 };
 
+exports.addToWishlistById = async (req, res) => {
+  try {
+    const { vehicleId } = req.params;
+    const buyerId = req.userInfo.id;
+
+    // Validate vehicleId
+    if (!mongoose.Types.ObjectId.isValid(vehicleId)) {
+      return res.status(400).json({ message: "Invalid Vehicle Id Format" });
+    }
+
+    // Get vehicle details
+    const vehicle = await VehicleModel.findById(vehicleId);
+    if (!vehicle) {
+      return res.status(404).json({ message: "Vehicle Not Found" });
+    }
+
+    // Find buyer
+    const buyer = await BuyerModel.findById(buyerId);
+    if (!buyer) {
+      return res.status(404).json({ message: "Buyer Not Found" });
+    }
+
+    // Check if already in wishlist
+    if (buyer.wishlist.some(item => item.vehicleId.toString() === vehicleId)) {
+      return res.status(400).json({ message: "Vehicle Already In Wishlist" });
+    }
+
+    // ✅ Push full vehicle snapshot
+    buyer.wishlist.push({
+      vehicleId: vehicle._id,
+      brand: vehicle.brand,
+      model: vehicle.model,
+      price: vehicle.price,
+      fuelType: vehicle.fuelType,
+      transmission: vehicle.transmission,
+      description: vehicle.description,
+      images: vehicle.images
+    });
+
+    await buyer.save();
+
+    return res.json({
+      message: "Vehicle added to wishlist successfully",
+      wishlist: buyer.wishlist
+    });
+  } catch (error) {
+    console.error("Add to Wishlist Error:", error);
+    return res.status(500).json({
+      message: "Server Error While Adding To Wishlist",
+      error: error.message
+    });
+  }
+};
 
 
-// Corrected viewVehiclesById function
-// exports.viewVehiclesById = async (req, res, next) => {
-//     try {
-//         const { id } = req.params;
-        
-//         // Check if ID is provided
-//         if (!id) {
-//             return res.status(400).json({ message: "Vehicle ID is required" });
-//         }
-        
-//         // Check if ID is a valid MongoDB ObjectId
-//         if (!mongoose.Types.ObjectId.isValid(id)) {
-//             return res.status(400).json({ message: "Invalid vehicle ID format" });
-//         }
+exports.removeFromWishlistById = async (req, res) => {
+  try {
+    const { vehicleId } = req.params;
+    const buyerId = req.userInfo.id;
 
-//         const vehicle = await VehicleModel.findById(id);
+    // Validate vehicleId
+    if (!mongoose.Types.ObjectId.isValid(vehicleId)) {
+      return res.status(400).json({ message: "Invalid Vehicle Id Format" });
+    }
 
-//         if (!vehicle) {
-//             return res.status(404).json({ message: "Vehicle Not Found" });
-//         }
+    // Find buyer
+    const buyer = await BuyerModel.findById(buyerId);
+    if (!buyer) {
+      return res.status(404).json({ message: "Buyer Not Found" });
+    }
 
-//         return res.json({
-//             message: "Vehicle Details Retrieved Successfully",
-//             data: vehicle
-//         });
-//     } catch (error) {
-//         console.error("Vehicle Details Server Error:", error);
-//         return res.status(500).json({
-//             message: "Server Error While Fetching Vehicle Details",
-//             error: error.message
-//         });
-//     }
-// };
+    // Check if vehicle exists in wishlist
+    const exists = buyer.wishlist.some(
+      (item) => item.vehicleId.toString() === vehicleId
+    );
+    if (!exists) {
+      return res.status(404).json({ message: "Vehicle Not Found In Wishlist" });
+    }
+
+    // ✅ Remove vehicle from wishlist
+    buyer.wishlist = buyer.wishlist.filter(
+      (item) => item.vehicleId.toString() !== vehicleId
+    );
+
+    await buyer.save();
+
+    return res.json({
+      message: "Vehicle removed from wishlist successfully",
+      wishlist: buyer.wishlist,
+    });
+  } catch (error) {
+    console.error("Remove from Wishlist Error:", error);
+    return res.status(500).json({
+      message: "Server Error While Removing From Wishlist",
+      error: error.message,
+    });
+  }
+};
