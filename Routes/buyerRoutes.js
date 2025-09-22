@@ -9,7 +9,7 @@ Router.get("/viewAllVehicles", tokenValidater, validaterMiddleware, checkAuth, c
 Router.get("/viewVehicles/:vehicleId", tokenValidater, validaterMiddleware, checkAuth, checkRole("buyer"), viewVehiclesById)
 Router.post("/addToWishlist/:vehicleId", tokenValidater, validaterMiddleware, checkAuth, checkRole("buyer"), addToWishlistById)
 Router.get("/viewAllWishlist", tokenValidater, validaterMiddleware, checkAuth, checkRole("buyer"), viewAllWishlist)
-Router.delete("deleteWishlist/:vehicleId", tokenValidater, validaterMiddleware, checkAuth, checkRole("buyer"), removeFromWishlistById)
+Router.delete("/deleteWishlist/:vehicleId", tokenValidater, validaterMiddleware, checkAuth, checkRole("buyer"), removeFromWishlistById)
 
 
 module.exports = Router
