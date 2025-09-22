@@ -101,6 +101,34 @@ exports.addToWishlistById = async (req, res) => {
   }
 };
 
+exports.viewAllWishlist = async (req, res) => {
+  try {
+    const buyerId = req.userInfo.id;
+
+    // Find buyer
+    const buyer = await BuyerModel.findById(buyerId);
+    if (!buyer) {
+      return res.status(404).json({ message: "Buyer Not Found" });
+    }
+
+    // Check if wishlist is empty
+    if (!buyer.wishlist || buyer.wishlist.length === 0) {
+      return res.json({ message: "Wishlist is empty", wishlist: [] });
+    }
+
+    return res.json({
+      message: "Wishlist retrieved successfully",
+      wishlist: buyer.wishlist
+    });
+  } catch (error) {
+    console.error("View Wishlist Error:", error);
+    return res.status(500).json({
+      message: "Server Error While Fetching Wishlist",
+      error: error.message
+    });
+  }
+};
+
 
 exports.removeFromWishlistById = async (req, res) => {
   try {
