@@ -12,7 +12,7 @@ const fs = require("fs")
 connectDB()
 
 app.use(cors({
-    origin: ["https://ev-bikes-frontend-mern-project.vercel.app", "http://localhost:5173"],
+    origin: ["https://ev-bikes-frontend-mern-project.vercel.app", "http://localhost:5173", "https://ev-bikes-frontend-mern-projec-git-9846f4-pavanvikas36s-projects.vercel.app/"],
     method: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
 }))
