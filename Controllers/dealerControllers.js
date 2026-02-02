@@ -91,60 +91,36 @@ exports.updateVehicle = async (req, res) => {
   try {
     const { vehicleId } = req.params;
 
-    const vehicle = await VehicleModel.findOne({
-      _id: vehicleId,
-      dealerId: req.userInfo.id,
-    });
+    const updatedVehicle = await VehicleModel.findOneAndUpdate(
+      {
+        _id: vehicleId,
+        dealerId: req.userInfo.id,
+      },
+      {
+        $set: {
+          brand: req.body.brand,
+          model: req.body.model,
+          price: req.body.price,
+          fuelType: req.body.fuelType,
+          transmission: req.body.transmission,
+          description: req.body.description,
+        },
+      },
+      {
+        new: true,
+        runValidators: false, // 🔥 KEY FIX
+      }
+    );
 
-    if (!vehicle) {
+    if (!updatedVehicle) {
       return res.status(404).json({
         message: "Vehicle not found or not authorized",
       });
     }
 
-    // ✅ Update text fields
-    const {
-      brand,
-      model,
-      price,
-      fuelType,
-      transmission,
-      description,
-    } = req.body;
-
-    if (brand) vehicle.brand = brand;
-    if (model) vehicle.model = model;
-    if (price) vehicle.price = price;
-    if (fuelType) vehicle.fuelType = fuelType;
-    if (transmission) vehicle.transmission = transmission;
-    if (description) vehicle.description = description;
-
-    // ✅ Handle new images
-    if (req.files && req.files.length > 0) {
-      let newImages = [];
-
-      for (let file of req.files) {
-        const result = await cloudinaryImageUpload(file.path, {
-          folder: "vehicles",
-        });
-
-        newImages.push({
-          url: result.url,
-          public_id: result.public_id,
-        });
-
-        fs.unlinkSync(file.path);
-      }
-
-      // append new images
-      vehicle.images.push(...newImages);
-    }
-
-    await vehicle.save();
-
     return res.json({
       message: "Vehicle Updated Successfully",
-      data: vehicle,
+      data: updatedVehicle,
     });
   } catch (error) {
     return res.status(500).json({
@@ -153,7 +129,6 @@ exports.updateVehicle = async (req, res) => {
     });
   }
 };
-
 
 
 exports.deleteVehicle = async (req, res) => {
